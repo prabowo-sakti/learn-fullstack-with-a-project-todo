@@ -13,6 +13,6 @@ const DATA = [
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     {/* <CekTimer /> */}
-    <App tasks={DATA} />
+    <App tugas={DATA} />
   </StrictMode>
 );

@@ -1,19 +1,16 @@
 import { useState } from "react";
 
-function Form({ onSubmit, isLoading }) {
-  const [message, setMessage] = useState("");
+function Form({ addTask, isLoading, error }) {
+  const [nameTasks, setNameTasks] = useState("");
 
-  function handleSubmit(event) {
-    event.preventDefault();
-
-    if (message.trim()) {
-      onSubmit({ message });
-      setMessage("");
-    }
+  function handleSubmit(e) {
+    e.preventDefault();
+    addTask(nameTasks);
+    setNameTasks("");
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="mt-4 flex space-x-2">
       <div className="label-wrapper mb-4">
         <label htmlFor="taskMessage" className="text-lg font-medium">
           What needs to be done?
@@ -21,23 +18,21 @@ function Form({ onSubmit, isLoading }) {
       </div>
       <input
         type="text"
-        id="taskMessage"
         name="text"
         autoComplete="off"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        className="p-2 border-2 rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        placeholder="Enter task message"
+        value={nameTasks}
+        onChange={(e) => setNameTasks(e.target.value)}
+        className="flex-1 rounded border border-gray-300 p-2"
+        placeholder="Add a new task "
         disabled={isLoading}
-        required
       />
       <button
-        type="submit"
-        className="btn w-full bg-black text-white py-2 rounded-md mt-2 hover:bg-gray-800 disabled:bg-gray-400"
+        className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:bg-gray-400"
         disabled={isLoading}
       >
         {isLoading ? "Menambahkan..." : "Add Task"}
       </button>
+      {error && <p className="text-red-500">{error}</p>}
     </form>
   );
 }
