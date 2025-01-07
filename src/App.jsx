@@ -2,18 +2,68 @@ import { useState, useEffect, useRef } from "react";
 import { nanoid } from "nanoid";
 
 import Form from "./Form";
+import Todo from "./Todo";
 function usePrevious(value) {
   const ref = useRef(null);
   useEffect(() => {
     ref.current = value;
   });
+
+  return ref.current;
 }
 
-function App() {
-  const [tasks, setTasks] = useState([]);
+const FILTER_MAP = {
+  All: () => true,
+  Active: (task) => !task.completed,
+  Completed: (task) => task.completed,
+};
+
+const FILTER_NAMES = Object.keys(FILTER_MAP);
+
+function App({ initialTasks }) {
+  const [tasks, setTasks] = useState(initialTasks);
   const [filter, setFilter] = useState("All");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  function toggleTaskCompleted(id) {
+    const updateTasks = tasks.map((task) => {
+      if (id === task.id) {
+        return { ...task, completed: !task.completed };
+      }
+      return task;
+    });
+    setTasks(updateTasks);
+  }
+
+  function deleteTask(id) {
+    const remainingTasks = tasks.filter((id) => id !== tasks.id);
+    setTasks(remainingTasks);
+  }
+
+  function editTask(id, newName) {
+    const editedTaskList = tasks.map((task) => {
+      if (id === task.id) {
+        return { ...task, name: newName };
+      }
+      return task;
+    });
+    setTasks(editedTaskList);
+  }
+
+  const taskList = tasks
+    .filter(FILTER_MAP[filter])
+    .map((task) => (
+      <Todo
+        id={task.id}
+        name={task.name}
+        completed={task.completed}
+        key={task.id}
+        toggleTaskCompleted={toggleTaskCompleted}
+        deleteTask={deleteTask}
+        editTask={editTask}
+      />
+    ));
 
   async function addTask(name) {
     setIsLoading(true);
@@ -38,7 +88,8 @@ function App() {
         message: result.message || message,
         completed: result.completed || false,
       };
-      setTasks([...tasks, newTask]);
+      console.log(newTask);
+      setTasks((prevTabs) => [...prevTabs, newTask]);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -46,21 +97,38 @@ function App() {
     }
   }
 
+  const taskNoun = taskList.length !== 1 ? "tasks" : "task";
+  const headingText = `${taskList.length} ${taskNoun} remaining`;
+
+  const listHeadingRef = useRef(null);
+  const prevTaskLength = usePrevious(tasks.length);
+
+  useEffect(() => {
+    if (tasks.length < prevTaskLength) {
+      listHeadingRef.current.focus();
+    }
+  }, [tasks.length, prevTaskLength]);
+
   return (
     <>
       <div className="max-w-4xl mx-auto p-4 bg-white shadow-lg my-8">
         <h1 className="text-3xl font-bold text-center mb-6">Todo List</h1>
-        <Form addTask={addTask} isLoading={isLoading} error={error} />
+        <Form
+          addTask={addTask}
+          isLoading={isLoading}
+          setError={setError}
+          error={error}
+        />
         <div className="flex space-x-4 my-4">FilterList</div>
         <h2
           id="list-heading"
           tabIndex="-1"
           className="text-xl font-semibold mb-2"
         >
-          Heading Text
+          {headingText}
         </h2>
         <ul aria-labelledby="list-heading" className="space-y-2" role="list">
-          TaskList
+          {taskList}
         </ul>
       </div>
     </>

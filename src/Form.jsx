@@ -1,33 +1,37 @@
 import { useState } from "react";
 
-function Form({ addTask, isLoading, error }) {
+function Form({ addTask, isLoading, setError, error }) {
   const [nameTasks, setNameTasks] = useState("");
 
   function handleSubmit(e) {
     e.preventDefault();
+    if (!nameTasks.trim()) {
+      return setError("Mohon masukan task yang valid");
+    }
     addTask(nameTasks);
     setNameTasks("");
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4 flex space-x-2">
-      <div className="label-wrapper mb-4">
-        <label htmlFor="taskMessage" className="text-lg font-medium">
+    <form onSubmit={handleSubmit} className="flex flex-col items-center">
+      <h2 className="w-full text-center">
+        <label htmlFor="new-todo-input" className="text-lg font-light mb-4 p-2">
           What needs to be done?
         </label>
-      </div>
+      </h2>
       <input
         type="text"
+        id="new-todo-input"
         name="text"
         autoComplete="off"
         value={nameTasks}
         onChange={(e) => setNameTasks(e.target.value)}
-        className="flex-1 rounded border border-gray-300 p-2"
+        className="border-2 border-black p-8 w-full focus:border-gray-700 focus:ring-2 focus:ring-gray-700"
         placeholder="Add a new task "
         disabled={isLoading}
       />
       <button
-        className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:bg-gray-400"
+        className="mt-4 border border-gray-700 cursor-pointer px-4 py-2 capitalize bg-black text-white"
         disabled={isLoading}
       >
         {isLoading ? "Menambahkan..." : "Add Task"}

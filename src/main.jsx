@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
 import CekTimer from "./CekTimer.jsx";
+import AutoFocusInput from "./UseRefFocus.jsx";
 
 const DATA = [
   { id: "todo-0", name: "Eat", completed: true },
@@ -13,6 +14,7 @@ const DATA = [
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     {/* <CekTimer /> */}
-    <App tugas={DATA} />
+    {/* <AutoFocusInput /> */}
+    <App initialTasks={DATA} />
   </StrictMode>
 );
