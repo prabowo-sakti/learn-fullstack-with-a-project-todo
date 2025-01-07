@@ -101,6 +101,14 @@ const Todo = ({
     </div>
   );
 
+  useEffect(() => {
+    if (!wasEditing && isEditing) {
+      editFieldRef.current.focus();
+    } else if (wasEditing && !isEditing) {
+      editButtonRef.current.focus();
+    }
+  }, [wasEditing, isEditing]);
+
   return (
     <li className="border-b border-gray-200 py-4">
       {isEditing ? editingTemplate : viewTemplate}
