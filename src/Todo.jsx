@@ -32,9 +32,9 @@ const Todo = ({
   }
 
   const editingTemplate = (
-    <form className="space-y-4" onSubmit={handleSubmit}>
+    <form className="space-y-4 relative top-10" onSubmit={handleSubmit}>
       <div className="flex flex-col">
-        <label htmlFor={id} className="text-lg font-medium mb-2">
+        <label htmlFor={id} className="text-lg font-medium mb-2 top-20">
           New name for {name}
         </label>
         <input
@@ -67,7 +67,7 @@ const Todo = ({
   );
 
   const viewTemplate = (
-    <div className="flex justify-between items-center">
+    <div className="flex justify-between items-center space-y-4 relative -bottom-20">
       <div className="flex items-center">
         <input
           type="checkbox"
@@ -83,7 +83,7 @@ const Todo = ({
       <div className="flex space-x-4">
         <button
           type="button"
-          className="border border-gray-700 cursor-pointer px-4 py-2 capitalize"
+          className="border border-gray-700 cursor-pointer px-4 py-1 capitalize"
           ref={editButtonRef}
           onClick={() => setEditing(true)}
         >

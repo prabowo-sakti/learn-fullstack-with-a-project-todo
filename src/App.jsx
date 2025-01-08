@@ -3,6 +3,7 @@ import { nanoid } from "nanoid";
 
 import Form from "./Form";
 import Todo from "./Todo";
+import FilterButton from "./FilterButton";
 function usePrevious(value) {
   const ref = useRef(null);
   useEffect(() => {
@@ -37,7 +38,7 @@ function App({ initialTasks }) {
   }
 
   function deleteTask(id) {
-    const remainingTasks = tasks.filter((id) => id !== tasks.id);
+    const remainingTasks = tasks.filter((task) => id !== task.id);
     setTasks(remainingTasks);
   }
 
@@ -65,6 +66,17 @@ function App({ initialTasks }) {
       />
     ));
 
+  const filterList = FILTER_NAMES.map((name) => {
+    return (
+      <FilterButton
+        key={name}
+        name={name}
+        isPressed={name === filter}
+        setFilter={setFilter}
+      />
+    );
+  });
+
   async function addTask(name) {
     setIsLoading(true);
     setError(null);
@@ -82,14 +94,14 @@ function App({ initialTasks }) {
         throw new Error("Failed to fetch data from the server");
       }
 
-      const result = await res.json();
-      const newTask = {
-        id: result.id || "todo-" + nanoid(),
-        message: result.message || message,
-        completed: result.completed || false,
-      };
-      console.log(newTask);
-      setTasks((prevTabs) => [...prevTabs, newTask]);
+      // const result = await res.json();
+      // const newTask = {
+      //   id: result.id || "todo-" + nanoid(),
+      //   message: result.message || message,
+      //   completed: result.completed || false,
+      // };
+      // console.log(newTask);
+      // setTasks((prevTabs) => [...prevTabs, newTask]);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -119,7 +131,7 @@ function App({ initialTasks }) {
           setError={setError}
           error={error}
         />
-        <div className="flex space-x-4 my-4">FilterList</div>
+        <div className="flex space-x-4 my-4 absolute">{filterList}</div>
         <h2
           id="list-heading"
           tabIndex="-1"

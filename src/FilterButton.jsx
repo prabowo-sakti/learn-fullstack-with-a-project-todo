@@ -2,9 +2,9 @@ function FilterButton({ name, isPressed, setFilter }) {
   return (
     <button
       type="button"
-      className={`border ${
+      className={`relative border ${
         isPressed ? "border-gray-700 underline" : "border-gray-300"
-      } cursor-pointer px-4 py-2 capitalize`}
+      } cursor-pointer px-4 py-2 capitalize top-9`}
       aria-pressed={isPressed}
       onClick={() => setFilter(name)}
     >
@@ -14,3 +14,5 @@ function FilterButton({ name, isPressed, setFilter }) {
     </button>
   );
 }
+
+export default FilterButton;
