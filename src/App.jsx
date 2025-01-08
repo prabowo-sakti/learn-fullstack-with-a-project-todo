@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import { nanoid } from "nanoid";
 
 import Form from "./Form";
 import Todo from "./Todo";
@@ -52,6 +51,26 @@ function App({ initialTasks }) {
     setTasks(editedTaskList);
   }
 
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/api/v1/whisper"); // Path relatif
+        if (!res.ok) {
+          throw new Error("Oops, server lagi bermasalah");
+        }
+        const data = await res.json();
+        setTasks((prevTasks) => [...prevTasks, data]);
+      } catch (err) {
+        console.error("Fetch error:", err);
+        setError(err); // Pastikan menggunakan 'err' bukan 'er'
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTasks();
+  }, []); // Dependency array kosong untuk mencegah infinite loop
+
   const taskList = tasks
     .filter(FILTER_MAP[filter])
     .map((task) => (
@@ -103,7 +122,7 @@ function App({ initialTasks }) {
       // console.log(newTask);
       // setTasks((prevTabs) => [...prevTabs, newTask]);
     } catch (error) {
-      setError(error.message);
+      setError(error);
     } finally {
       setIsLoading(false);
     }
