@@ -58,8 +58,18 @@ function App({ initialTasks }) {
         if (!res.ok) {
           throw new Error("Oops, server lagi bermasalah");
         }
+
         const data = await res.json();
-        setTasks((prevTasks) => [...prevTasks, data]);
+        const previousTasks = initialTasks;
+        const result = previousTasks.concat(data);
+
+        // const transFormData = result.map((task) => ({
+        //   id: task.id,
+        //   message: task.message,
+        //   completed: task.completed,
+        // }));
+
+        setTasks(result);
       } catch (err) {
         console.error("Fetch error:", err);
         setError(err); // Pastikan menggunakan 'err' bukan 'er'
@@ -76,7 +86,7 @@ function App({ initialTasks }) {
     .map((task) => (
       <Todo
         id={task.id}
-        name={task.name}
+        name={task.message}
         completed={task.completed}
         key={task.id}
         toggleTaskCompleted={toggleTaskCompleted}
@@ -112,15 +122,6 @@ function App({ initialTasks }) {
       if (!res.ok) {
         throw new Error("Failed to fetch data from the server");
       }
-
-      // const result = await res.json();
-      // const newTask = {
-      //   id: result.id || "todo-" + nanoid(),
-      //   message: result.message || message,
-      //   completed: result.completed || false,
-      // };
-      // console.log(newTask);
-      // setTasks((prevTabs) => [...prevTabs, newTask]);
     } catch (error) {
       setError(error);
     } finally {

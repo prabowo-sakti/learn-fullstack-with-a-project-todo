@@ -9,6 +9,7 @@ function Form({ addTask, isLoading, setError, error }) {
       return setError("Mohon masukan task yang valid");
     }
     addTask(nameTasks);
+    console.log(nameTasks);
     setNameTasks("");
   }
 
