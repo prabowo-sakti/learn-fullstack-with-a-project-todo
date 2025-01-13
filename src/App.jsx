@@ -61,13 +61,8 @@ function App({ initialTasks }) {
 
         const data = await res.json();
         const previousTasks = initialTasks;
-        const result = previousTasks.concat(data);
-
-        // const transFormData = result.map((task) => ({
-        //   id: task.id,
-        //   message: task.message,
-        //   completed: task.completed,
-        // }));
+        const result = [...previousTasks, ...data];
+        console.log(result);
 
         setTasks(result);
       } catch (err) {
