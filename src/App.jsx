@@ -20,8 +20,8 @@ const FILTER_MAP = {
 
 const FILTER_NAMES = Object.keys(FILTER_MAP);
 
-function App({ initialTasks }) {
-  const [tasks, setTasks] = useState(initialTasks);
+function App() {
+  const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState("All");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -36,10 +36,20 @@ function App({ initialTasks }) {
     setTasks(updateTasks);
   }
 
-  function deleteTask(id) {
-    const remainingTasks = tasks.filter((task) => id !== task.id);
-    setTasks(remainingTasks);
-  }
+  const deleteTask = async (id) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/v1/whisper/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        setTasks((prevItems) => prevItems.filter((task) => id !== task.id));
+      }
+    } catch {}
+  };
 
   function editTask(id, newName) {
     const editedTaskList = tasks.map((task) => {
@@ -60,9 +70,7 @@ function App({ initialTasks }) {
         }
 
         const data = await res.json();
-        const previousTasks = initialTasks;
-        const result = [...previousTasks, ...data];
-        console.log(result);
+        const result = [...data];
 
         setTasks(result);
       } catch (err) {
@@ -113,7 +121,8 @@ function App({ initialTasks }) {
         },
         body: JSON.stringify({ message: name }),
       });
-
+      const data = res.json();
+      setTasks((prevTabs) => [...prevTabs], [...data]);
       if (!res.ok) {
         throw new Error("Failed to fetch data from the server");
       }
