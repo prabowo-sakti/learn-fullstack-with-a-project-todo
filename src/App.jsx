@@ -7,7 +7,7 @@ function usePrevious(value) {
   const ref = useRef(null);
   useEffect(() => {
     ref.current = value;
-  });
+  }, [value]);
 
   return ref.current;
 }
@@ -47,8 +47,12 @@ function App() {
 
       if (response.ok) {
         setTasks((prevItems) => prevItems.filter((task) => id !== task.id));
+      } else {
+        throw new Error("Gagal dalam menghapus task");
       }
-    } catch {}
+    } catch (err) {
+      setError(err);
+    }
   };
 
   function editTask(id, newName) {
@@ -70,9 +74,11 @@ function App() {
         }
 
         const data = await res.json();
-        const result = [...data];
+        if (!Array.isArray(data)) {
+          throw new Error("Data yang dikirimkan bukan array");
+        }
 
-        setTasks(result);
+        setTasks(data);
       } catch (err) {
         console.error("Fetch error:", err);
         setError(err); // Pastikan menggunakan 'err' bukan 'er'
@@ -121,11 +127,20 @@ function App() {
         },
         body: JSON.stringify({ message: name }),
       });
-      const data = res.json();
-      setTasks((prevTabs) => [...prevTabs], [...data]);
       if (!res.ok) {
         throw new Error("Failed to fetch data from the server");
       }
+      const data = await res.json();
+      if (!data.id || !data.message) {
+        throw new Error("Id atau message tidak lengkap");
+      }
+      const newTask = {
+        message: data.message,
+        id: data.id,
+        completed: false,
+      };
+
+      setTasks((prevTasks) => [...prevTasks, newTask]);
     } catch (error) {
       setError(error);
     } finally {
